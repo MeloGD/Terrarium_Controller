@@ -18,10 +18,9 @@ const float GetTemperature(void) {
   sensorDS118B20.getAddress(temp_sensor_add,0);
   sensorDS118B20.requestTemperatures();
   if(sensorDS118B20.isConnected(temp_sensor_add)){
-    //Serial.println("Temperatura: ");
+    //Serial.println(sensorDS118B20.getTempCByIndex(0));
     float temp = sensorDS118B20.getTempC(temp_sensor_add);
     return temp;
-    //Serial.println(temp);
   }
 }
 
@@ -36,26 +35,8 @@ void setup() {
   sensorDS118B20.begin();
   lcd.init();
   lcd.backlight();
-  //lcd.setCursor(4,1);
-  //lcd.print("Thermo.Test");
-  //delay(5000);
-  //lcd.clear();
-  //Serial.begin(9600);
-  
-
-
 }
 
 void loop() {
-  /*
-  Serial.println("Temperature test.");
-  sensorDS118B20.requestTemperatures();
-
-  Serial.print("Temperature is: ");
-  //Serial.println(sensorDS118B20.getTempCByIndex(0));
-  Serial.println(sensorDS118B20.getTempC(0));
-  delay(2000);  
-  */
   PrintLCD(GetTemperature());
-  
 }
