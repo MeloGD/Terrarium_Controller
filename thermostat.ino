@@ -1,60 +1,76 @@
 #include <LiquidCrystal_I2C.h>
 #include <DallasTemperature.h>
+#include <DHT.h>
 
 // Number of the data pin from the temperature sensor DS18B20
-const int data_pinDQ = 8;
+const int data_pin_dq = 8;
+// Number of the data pin from them dht22 temp&humidity sensor
+const int data_pin_dht = 9;
 
 // Objects OneWire and DallasTemperature for future use with de temp sensor
-OneWire temp_onewire(data_pinDQ);
+OneWire temp_onewire(data_pin_dq);
 DallasTemperature sensorDS18B20(&temp_onewire);
 // Screen object "lcd"
-LiquidCrystal_I2C lcd(0x27,20,4);
+LiquidCrystal_I2C lcd(0x27, 20, 4);
+// DHT object
+DHT dhtsensor(data_pin_dht, DHT22);
 
+//
 DeviceAddress temp_sensor_add_0;
 DeviceAddress temp_sensor_add_1;
 
-
-struct Temperature_Data {
-  float zone0 = 0;
-  float zone1 = 0;
+struct Data {
+  float zone0_temp = 0;
+  float zone1_temp = 0;
+  float zone2_temp = 0;
+  float humidity1 = 0;
 };
 
 
 // Functions
-const Temperature_Data GetTemperature(void) {
-  Temperature_Data temperatures;
+const Data GetData(void) {
+  Data sensors_data;
   sensorDS18B20.getAddress(temp_sensor_add_0,0);
   sensorDS18B20.getAddress(temp_sensor_add_1,1);
   sensorDS18B20.requestTemperatures();
   if((sensorDS18B20.isConnected(temp_sensor_add_1)) && (sensorDS18B20.isConnected(temp_sensor_add_1))) {
-    temperatures.zone0 = sensorDS18B20.getTempC(temp_sensor_add_0);
-    temperatures.zone1 = sensorDS18B20.getTempC(temp_sensor_add_1);
-    //float temps = sensorDS18B20.getTempCByIndex(0);
-    //float temp
-    //float temp = sensorDS18B20.getTempC(temp_sensor_add);
-    return temperatures;
+    sensors_data.zone0_temp = sensorDS18B20.getTempC(temp_sensor_add_0);
+    sensors_data.zone1_temp = sensorDS18B20.getTempC(temp_sensor_add_1);
+    sensors_data.zone2_temp = dhtsensor.readTemperature();
+    sensors_data.humidity1 = dhtsensor.readHumidity();
+    return sensors_data;
   }
 }
 
-void PrintLCD(const Temperature_Data temperature) {
+void PrintLCD(const Data sensors_data) {
   lcd.setCursor(4,0);
-  lcd.print(temperature.zone0);
+  lcd.print(sensors_data.zone0_temp);
   lcd.setCursor(10,0);
   lcd.print("grados.");
   //
   lcd.setCursor(4,1);
-  lcd.print(temperature.zone1);
+  lcd.print(sensors_data.zone1_temp);
   lcd.setCursor(10,1);
   lcd.print("grados.");
-
+  //
+  lcd.setCursor(4,2);
+  lcd.print(sensors_data.zone2_temp);
+  lcd.setCursor(10,2);
+  lcd.print("grados.");
+  //
+  lcd.setCursor(4,3);
+  lcd.print(sensors_data.humidity1);
+  lcd.setCursor(10,3);
+  lcd.print("%");
 }
 
 void setup() {
   sensorDS18B20.begin();
+  dhtsensor.begin();
   lcd.init();
   lcd.backlight();
 }
 
 void loop() {
-  PrintLCD(GetTemperature());
+  PrintLCD(GetData());
 }

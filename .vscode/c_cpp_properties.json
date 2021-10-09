@@ -21,6 +21,8 @@
                 "/home/melo/Descargas/arduino-1.8.12/hardware/arduino/avr/libraries/Wire/src",
                 "/home/melo/Arduino/libraries/DallasTemperature",
                 "/home/melo/Arduino/libraries/OneWire",
+                "/home/melo/Arduino/libraries/DHT_sensor_library",
+                "/home/melo/Arduino/libraries/Adafruit_Unified_Sensor",
                 "/home/melo/Descargas/arduino-1.8.12/hardware/tools/avr/lib/gcc/avr/7.3.0/include",
                 "/home/melo/Descargas/arduino-1.8.12/hardware/tools/avr/lib/gcc/avr/7.3.0/include-fixed",
                 "/home/melo/Descargas/arduino-1.8.12/hardware/tools/avr/avr/include"
