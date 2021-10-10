@@ -6,6 +6,8 @@
 const int data_pin_dq = 8;
 // Number of the data pin from them dht22 temp&humidity sensor
 const int data_pin_dht = 9;
+// Rele digital pin
+byte rele_pin = 53;
 
 // Objects OneWire and DallasTemperature for future use with de temp sensor
 OneWire temp_onewire(data_pin_dq);
@@ -38,6 +40,11 @@ const Data GetData(void) {
     sensors_data.zone1_temp = sensorDS18B20.getTempC(temp_sensor_add_1);
     sensors_data.zone2_temp = dhtsensor.readTemperature();
     sensors_data.humidity1 = dhtsensor.readHumidity();
+    if (sensors_data.humidity1 > 60) {
+        digitalWrite(rele_pin, LOW);
+    } else {
+      digitalWrite(rele_pin, HIGH);
+    }
     return sensors_data;
   }
 }
@@ -64,7 +71,10 @@ void PrintLCD(const Data sensors_data) {
   lcd.print("%");
 }
 
+
+
 void setup() {
+  pinMode(rele_pin, OUTPUT);
   sensorDS18B20.begin();
   dhtsensor.begin();
   lcd.init();
