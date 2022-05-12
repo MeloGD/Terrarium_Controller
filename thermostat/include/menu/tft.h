@@ -2,7 +2,7 @@
 #define tftcustom
 
 #include <MCUFRIEND_kbv.h>
-
+#include <devices/sensors.h>
 
 // Colors
 #define BLACK 0x0000
@@ -90,10 +90,12 @@ void loadWarmHide(void) {
   tft.setTextSize(2);
   tft.print("Actual Temp.");
   tft.drawRoundRect(40, 100, 180, 140, 10, WHITE);
+  /*
   tft.setCursor(70,150);
   tft.setTextSize(5);
-  tft.print("15");
+  tft.print(getWarmData());
   tft.print(" C");
+  */
   tft.setCursor(275, 75);
   tft.setTextSize(2);
   tft.print("Target Temp.");

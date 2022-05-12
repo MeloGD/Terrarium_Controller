@@ -116,6 +116,13 @@ void editTemperatureWarmSide() {
     previous.press(down && previous.contains(pixel_x, pixel_y));
     next.press(down && next.contains(pixel_x, pixel_y));
     edit.press(down && edit.contains(pixel_x, pixel_y));  
+    // sacar temperatura
+    tft.setTextColor(WHITE, BLACK);
+    tft.setCursor(70,150);
+    tft.setTextSize(3);
+    tft.print(getWarmData());
+    tft.print(" C");
+
     if (edit.justPressed()) {
       editTargetTemp();
       tft.fillScreen(BLACK);
