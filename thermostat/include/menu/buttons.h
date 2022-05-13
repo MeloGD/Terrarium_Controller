@@ -5,6 +5,7 @@
 #include <Adafruit_GrayOLED.h>
 #include <menu/touchscreen.h>
 
+
 // Variables
 bool load_edit_menu = false;
 bool load_edit_temp = false;
@@ -12,6 +13,11 @@ bool load_edit_bulb = false;
 bool load_edit_uvb = false;
 bool load_edit_plants = false;
 bool down;
+
+//relay
+byte dhp_relay_pin = 40;
+byte uvb_relay_pin = 42;
+byte light_relay_pin = 44;
 
 // Buttons 
 Adafruit_GFX_Button previous, next, edit, increase, decrease, home;
@@ -74,6 +80,30 @@ void launchControls(void) {
   }
 }
 
+void relayControlLights(void) {
+  DateTime now =  rtc.now();
+  // DHP
+  int hour = now.hour();
+  int minute = now.minute();
+  if ((hour == on_dhp_hour) && (minute == on_dhp_minute)) {
+    digitalWrite(dhp_relay_pin, LOW);
+  } else if ((hour == off_dhp_hour) && (minute == off_dhp_minute)){
+    digitalWrite(dhp_relay_pin, HIGH);
+  }
+  // UVB
+  if ((hour == on_uvb_hour) && (minute == on_uvb_minute)) {
+    digitalWrite(uvb_relay_pin, LOW);
+  } else if ((hour == off_uvb_hour) && (minute == off_uvb_minute)){
+    digitalWrite(uvb_relay_pin, HIGH);
+  }
+  // Plants Light
+  if ((hour == on_plants_hour) && (minute == on_plants_minute)) {
+    digitalWrite(light_relay_pin, LOW);
+  } else if ((hour == off_plants_hour) && (minute == off_plants_minute)){
+    digitalWrite(light_relay_pin, HIGH);
+  }
+}
+
 void editTargetTemp(void) {
   tft.fillScreen(BLACK);
   loadEditTempMenu();
@@ -87,7 +117,7 @@ void editTargetTemp(void) {
     decrease.press(down && decrease.contains(pixel_x, pixel_y)); 
     home.press(down && home.contains(pixel_x, pixel_y)); 
     if (increase.justPressed()) {
-      targettemp++;
+      targettemperature += 0.5;
       loadEditTempMenu();
       increase.drawButton();
       decrease.drawButton();
@@ -95,7 +125,7 @@ void editTargetTemp(void) {
       delay(200);
     }
     if (decrease.justPressed()) {
-      targettemp--;
+      targettemperature -= 0.5;
       loadEditTempMenu();
       increase.drawButton();
       decrease.drawButton();
@@ -112,6 +142,8 @@ void editTargetTemp(void) {
 void editTemperatureWarmSide() {
   edit.drawButton();
   while (load_edit_menu) { 
+    // lights control
+    relayControlLights();
     down = Touch_getXY();
     previous.press(down && previous.contains(pixel_x, pixel_y));
     next.press(down && next.contains(pixel_x, pixel_y));
@@ -159,9 +191,11 @@ void switchHeatBulb(void) {
   if (switch_press_heat == true){
     heatswitch.drawButton();
     switch_press_heat = false;
+    digitalWrite(dhp_relay_pin, LOW);
   } else {
     heatswitch.drawButton(true);
     switch_press_heat = true;
+    digitalWrite(dhp_relay_pin, HIGH);
   }
 }
 
@@ -198,42 +232,42 @@ void timeHeatBulb(void) {
   while (time_heat_menu) {
     timePressButtons();
     if (incrhour1.justPressed()) {
-      onheathour++;
+      on_dhp_hour++;
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decrhour1.justPressed()) {
-      onheathour--;
+      on_dhp_hour--;
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (incrmin1.justPressed()) {
-      onheatminut++;
+      on_dhp_minute++;
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decrmin1.justPressed()) {
-      onheatminut--;
+      on_dhp_minute--;
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (incrhour2.justPressed()) {
-      offheathour++;
+      off_dhp_hour++;
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decrhour2.justPressed()) {
-      offheathour--;
+      off_dhp_hour--;
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (incrmin2.justPressed()) {
-      offheatminut++;
+      off_dhp_minute++;
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decrmin2.justPressed()) {
-      offheatminut--;
+      off_dhp_minute--;
       loadEditTimeHeatMenu();
       delay(100);
     }
@@ -250,9 +284,11 @@ void switchUvbBulb(void) {
   if (switch_press_uvb == true){
     uvbswitch.drawButton();
     switch_press_uvb = false;
+    digitalWrite(uvb_relay_pin, LOW);
   } else {
     uvbswitch.drawButton(true);
     switch_press_uvb = true;
+    digitalWrite(uvb_relay_pin, HIGH);
   }
 }
 
@@ -264,42 +300,42 @@ void timeUvbBulb(void) {
   while (time_heat_menu) {
     timePressButtons();
     if (incrhour1.justPressed()) {
-      onuvbhour++;
+      on_uvb_hour++;
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decrhour1.justPressed()) {
-      onuvbhour--;
+      on_uvb_hour--;
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (incrmin1.justPressed()) {
-      onuvbminut++;
+      on_uvb_minute++;
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decrmin1.justPressed()) {
-      onuvbminut--;
+      on_uvb_minute--;
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (incrhour2.justPressed()) {
-      offuvbhour++;
+      off_uvb_hour++;
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decrhour2.justPressed()) {
-      offuvbhour--;
+      off_uvb_hour--;
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (incrmin2.justPressed()) {
-      offuvbminut++;
+      off_uvb_minute++;
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decrmin2.justPressed()) {
-      offuvbminut--;
+      off_uvb_minute--;
       loadEditTimeUvbMenu();
       delay(100);
     }
@@ -316,9 +352,11 @@ void switchPlantsBulb(void) {
   if (switch_press_plants == true){
     plantswitch.drawButton();
     switch_press_plants = false;
+    digitalWrite(light_relay_pin, LOW);
   } else {
     plantswitch.drawButton(true);
     switch_press_plants = true;
+    digitalWrite(light_relay_pin, HIGH);
   }
 }
 
@@ -330,42 +368,42 @@ void timePlantsBulb(void) {
   while (time_heat_menu) {
     timePressButtons();
     if (incrhour1.justPressed()) {
-      onplantshour++;
+      on_plants_hour++;
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decrhour1.justPressed()) {
-      onplantshour--;
+      on_plants_hour--;
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (incrmin1.justPressed()) {
-      onplantsminut++;
+      on_plants_minute++;
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decrmin1.justPressed()) {
-      onplantsminut--;
+      on_plants_minute--;
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (incrhour2.justPressed()) {
-      offplantshour++;
+      off_plants_hour++;
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decrhour2.justPressed()) {
-      offplantshour--;
+      off_plants_hour--;
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (incrmin2.justPressed()) {
-      offplantsminut++;
+      off_plants_minute++;
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decrmin2.justPressed()) {
-      offplantsminut--;
+      off_plants_minute--;
       loadEditTimePlantsMenu();
       delay(100);
     }
@@ -384,6 +422,9 @@ void editControlPanel(void) {
   plantswitch.drawButton();
   timeplantsbulb.drawButton();
   while (load_edit_bulb) {
+    // this needs to be in every while. the dhp wont work otherwise
+    getWarmData();
+    relayControlLights();
     down = Touch_getXY();
     previous.press(down && previous.contains(pixel_x, pixel_y));
     next.press(down && next.contains(pixel_x, pixel_y));

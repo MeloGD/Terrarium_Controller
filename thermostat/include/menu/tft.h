@@ -4,6 +4,7 @@
 #include <MCUFRIEND_kbv.h>
 #include <devices/sensors.h>
 
+
 // Colors
 #define BLACK 0x0000
 #define NAVY 0x000F
@@ -28,24 +29,26 @@
 // tft object using the analog pins  LCD_CS = A3, LCD_CD = A2, LCD_WR = A1, LCD_RD = A0, LCD_RESET = A4 for spi comminication
 MCUFRIEND_kbv tft(A3, A2, A1, A0, A4);
 
+//rtc
+RTClib rtc;
+
 // variables
 int menuindex = 0;
-int targettemp = 20;
 
-int onheathour = 15;
-int offheathour = 20;
-int onheatminut = 40;
-int offheatminut = 30;
+int on_dhp_hour = 11;
+int off_dhp_hour = 20;
+int on_dhp_minute = 40;
+int off_dhp_minute = 30;
 
-int onuvbhour = 00;
-int offuvbhour = 01;
-int onuvbminut = 02;
-int offuvbminut = 03;
+int on_uvb_hour = 21;
+int on_uvb_minute = 26;
+int off_uvb_hour = 21;
+int off_uvb_minute = 25;
 
-int onplantshour = 10;
-int offplantshour = 11;
-int onplantsminut = 12;
-int offplantsminut = 13;
+int on_plants_hour = 10;
+int off_plants_hour = 11;
+int on_plants_minute = 12;
+int off_plants_minute = 13;
 
 void launchTFT(void) {
   // The id is required for the tft to work
@@ -95,13 +98,13 @@ void loadEnviroment() {
   tft.print("Humidity");
   tft.drawRoundRect(40, 100, 180, 140, 10, WHITE);
   tft.setCursor(70,150);
-  tft.setTextSize(5);
-  tft.print("15");
+  tft.setTextSize(3);
+  tft.print(getEnviromentData().envtemp);
   tft.print(" C");
   tft.drawRoundRect(260, 100, 180, 140, 10, WHITE);
   tft.setCursor(295,150);
-  tft.setTextSize(5);
-  tft.print("75");
+  //tft.setTextSize(5);
+  tft.print(getEnviromentData().envhumd);
   tft.print(" %");
 }
 
@@ -120,8 +123,8 @@ void loadWarmHide(void) {
   tft.print("Target Temp.");
   tft.drawRoundRect(260, 100, 180, 140, 10, WHITE);
   tft.setCursor(290,150);
-  tft.setTextSize(5);
-  tft.print(targettemp);
+  tft.setTextSize(3);
+  tft.print(targettemperature);
   tft.print(" C");
 }
 
@@ -149,18 +152,19 @@ void loadHumidHide(void) {
   tft.print(" %");
 }
 void loadColdHide(void) {
+  float temp = getColdData();
   printTFTClock();
   tft.setCursor(10,10);
   //tft.setTextSize(3);
-  //tft.setTextColor(WHITE);
+  //tft.setTextColor(WHITE,BLACK);
   tft.print("Cold Hide");
   tft.setCursor(172, 75);
   tft.setTextSize(2);
   tft.print("Temperature");
   tft.drawRoundRect(150, 100, 180, 140, 10, WHITE);
   tft.setCursor(180,150);
-  tft.setTextSize(5);
-  tft.print("15");
+  tft.setTextSize(3);
+  tft.print(temp);
   tft.print(" C");
 }
 void loadLightsPanel(void) {
@@ -190,8 +194,8 @@ void loadEditTempMenu() {
   tft.drawRoundRect(270, 100, 180, 140, 10, WHITE);
   tft.setCursor(290,155);
   tft.setTextColor(WHITE, BLACK);
-  tft.setTextSize(5);
-  tft.print(targettemp);
+  tft.setTextSize(3);
+  tft.print(targettemperature);
   tft.print(" ");
   tft.print("\367");
   tft.print("C");
@@ -223,20 +227,20 @@ void loadEditTimeHeatMenu(void) {
   //switch on
   tft.setTextSize(3);
   tft.setCursor(247,100);
-  tft.print(onheathour);
+  tft.print(on_dhp_hour);
   tft.drawRoundRect(240, 85, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,100);
-  tft.print(onheatminut);
+  tft.print(on_dhp_minute);
   tft.drawRoundRect(380, 85, 50, 50, 10, WHITE);
   // switch off
   tft.setTextSize(3);
   tft.setCursor(247,200);
-  tft.print(offheathour);
+  tft.print(off_dhp_hour);
   tft.drawRoundRect(240, 185, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,200);
-  tft.print(offheatminut);
+  tft.print(off_dhp_minute);
   tft.drawRoundRect(380, 185, 50, 50, 10, WHITE);
 }
 
@@ -264,20 +268,20 @@ void loadEditTimeUvbMenu(void) {
   //switch on
   tft.setTextSize(3);
   tft.setCursor(247,100);
-  tft.print(onuvbhour);
+  tft.print(on_uvb_hour);
   tft.drawRoundRect(240, 85, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,100);
-  tft.print(onuvbminut);
+  tft.print(on_uvb_minute);
   tft.drawRoundRect(380, 85, 50, 50, 10, WHITE);
   // switch off
   tft.setTextSize(3);
   tft.setCursor(247,200);
-  tft.print(offuvbhour);
+  tft.print(off_uvb_hour);
   tft.drawRoundRect(240, 185, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,200);
-  tft.print(offuvbminut);
+  tft.print(off_uvb_minute);
   tft.drawRoundRect(380, 185, 50, 50, 10, WHITE);
 }
 
@@ -305,20 +309,20 @@ void loadEditTimePlantsMenu(void) {
   //switch on
   tft.setTextSize(3);
   tft.setCursor(247,100);
-  tft.print(onplantshour);
+  tft.print(on_plants_hour);
   tft.drawRoundRect(240, 85, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,100);
-  tft.print(onplantsminut);
+  tft.print(on_plants_minute);
   tft.drawRoundRect(380, 85, 50, 50, 10, WHITE);
   // switch off
   tft.setTextSize(3);
   tft.setCursor(247,200);
-  tft.print(offplantshour);
+  tft.print(off_plants_hour);
   tft.drawRoundRect(240, 185, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,200);
-  tft.print(offplantsminut);
+  tft.print(off_plants_minute);
   tft.drawRoundRect(380, 185, 50, 50, 10, WHITE);
 }
 #endif
