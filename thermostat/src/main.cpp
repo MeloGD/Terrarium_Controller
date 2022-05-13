@@ -7,16 +7,18 @@
 void setup() {
   launchTFT();
   launchButtons();
+  Wire.begin();
 }
 
 void loop() {
   // Buttons
   launchControls();
+  //setClock();
   // Menu
   switch (menuindex) {
     case 0: // Enviroment Menu
       loadEnviroment();
-      break;    
+      break; 
     case 1: // Warm Hide Menu
       loadWarmHide();
       editTemperatureWarmSide();
@@ -32,6 +34,6 @@ void loop() {
       editControlPanel();
       break;
     default:
-      break;
+      break; 
   }
 }

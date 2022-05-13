@@ -58,11 +58,35 @@ void launchTFT(void) {
   tft.setRotation(1);
 }
 
-void loadEnviroment(void) {
-  tft.setCursor(10,10);
+void printTFTClock(void) {
+  DateTime now = rtc.now();
   tft.setTextSize(3);
-  tft.setTextColor(WHITE);
-  tft.print("Enviroment");
+  tft.setTextColor(WHITE,BLACK);
+  tft.setCursor(300, 10);
+  if (now.hour() < 10) {
+    tft.print('0');
+  }
+  tft.print(now.hour(), DEC);
+  tft.setCursor(340, 10);
+  tft.print(":");
+  tft.setCursor(360, 10);
+  if (now.minute() < 10) {
+    tft.print('0');
+  }
+  tft.print(now.minute());
+  tft.setCursor(400, 10);
+  tft.print(":");
+  tft.setCursor(420, 10);
+  if (now.second() < 10) {
+    tft.print('0');
+  }
+  tft.print(now.second(), DEC);
+}
+
+void loadEnviroment() {
+  printTFTClock();
+  tft.setCursor(10,10);
+  tft.print("Enviroment"); 
   tft.setCursor(60, 75);
   tft.setTextSize(2);
   tft.print("Temperature");
@@ -82,6 +106,7 @@ void loadEnviroment(void) {
 }
 
 void loadWarmHide(void) {
+  //printTFTClock();
   tft.setCursor(10,10);
   tft.setTextSize(3);
   tft.setTextColor(WHITE);
@@ -90,12 +115,6 @@ void loadWarmHide(void) {
   tft.setTextSize(2);
   tft.print("Actual Temp.");
   tft.drawRoundRect(40, 100, 180, 140, 10, WHITE);
-  /*
-  tft.setCursor(70,150);
-  tft.setTextSize(5);
-  tft.print(getWarmData());
-  tft.print(" C");
-  */
   tft.setCursor(275, 75);
   tft.setTextSize(2);
   tft.print("Target Temp.");
@@ -107,9 +126,10 @@ void loadWarmHide(void) {
 }
 
 void loadHumidHide(void) {
+  printTFTClock();
   tft.setCursor(10,10);
-  tft.setTextSize(3);
-  tft.setTextColor(WHITE);
+  //tft.setTextSize(3);
+  //tft.setTextColor(WHITE);
   tft.print("Humid Hide");
   tft.setCursor(60, 75);
   tft.setTextSize(2);
@@ -129,9 +149,10 @@ void loadHumidHide(void) {
   tft.print(" %");
 }
 void loadColdHide(void) {
+  printTFTClock();
   tft.setCursor(10,10);
-  tft.setTextSize(3);
-  tft.setTextColor(WHITE);
+  //tft.setTextSize(3);
+  //tft.setTextColor(WHITE);
   tft.print("Cold Hide");
   tft.setCursor(172, 75);
   tft.setTextSize(2);
@@ -179,6 +200,7 @@ void loadEditTempMenu() {
 
 // DHP
 void loadEditTimeHeatMenu(void) {
+  //printTFTClock();
   tft.setCursor(10,10);
   tft.setTextSize(3);
   tft.setTextColor(WHITE, BLACK);

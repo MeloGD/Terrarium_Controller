@@ -115,7 +115,9 @@ void editTemperatureWarmSide() {
     down = Touch_getXY();
     previous.press(down && previous.contains(pixel_x, pixel_y));
     next.press(down && next.contains(pixel_x, pixel_y));
-    edit.press(down && edit.contains(pixel_x, pixel_y));  
+    edit.press(down && edit.contains(pixel_x, pixel_y)); 
+    // imprimir reloj
+    printTFTClock(); 
     // sacar temperatura
     tft.setTextColor(WHITE, BLACK);
     tft.setCursor(70,150);
