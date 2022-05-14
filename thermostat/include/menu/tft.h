@@ -3,7 +3,7 @@
 
 #include <MCUFRIEND_kbv.h>
 #include <devices/sensors.h>
-
+#include <devices/rtc.h>
 
 // Colors
 #define BLACK 0x0000
@@ -14,7 +14,7 @@
 #define PURPLE 0x780F
 #define OLIVE 0x7BE0
 #define LIGHTGREY 0xC618
-#define DARKGREY 0x7BEF
+#define DARKGREY 0x7BEFtft
 #define BLUE 0x001F
 #define GREEN 0x07E0
 #define CYAN 0x07FF
@@ -28,27 +28,6 @@
 
 // tft object using the analog pins  LCD_CS = A3, LCD_CD = A2, LCD_WR = A1, LCD_RD = A0, LCD_RESET = A4 for spi comminication
 MCUFRIEND_kbv tft(A3, A2, A1, A0, A4);
-
-//rtc
-RTClib rtc;
-
-// variables
-int menuindex = 0;
-
-int on_dhp_hour = 11;
-int off_dhp_hour = 20;
-int on_dhp_minute = 40;
-int off_dhp_minute = 30;
-
-int on_uvb_hour = 21;
-int on_uvb_minute = 26;
-int off_uvb_hour = 21;
-int off_uvb_minute = 25;
-
-int on_plants_hour = 10;
-int off_plants_hour = 11;
-int on_plants_minute = 12;
-int off_plants_minute = 13;
 
 void launchTFT(void) {
   // The id is required for the tft to work
@@ -99,12 +78,12 @@ void loadEnviroment() {
   tft.drawRoundRect(40, 100, 180, 140, 10, WHITE);
   tft.setCursor(70,150);
   tft.setTextSize(3);
-  tft.print(getEnviromentData().envtemp);
+  tft.print(getEnviromentData().temp);
   tft.print(" C");
   tft.drawRoundRect(260, 100, 180, 140, 10, WHITE);
   tft.setCursor(295,150);
   //tft.setTextSize(5);
-  tft.print(getEnviromentData().envhumd);
+  tft.print(getEnviromentData().humd);
   tft.print(" %");
 }
 
@@ -124,7 +103,7 @@ void loadWarmHide(void) {
   tft.drawRoundRect(260, 100, 180, 140, 10, WHITE);
   tft.setCursor(290,150);
   tft.setTextSize(3);
-  tft.print(targettemperature);
+  tft.print(target_temperature);
   tft.print(" C");
 }
 
@@ -142,13 +121,12 @@ void loadHumidHide(void) {
   tft.print("Humidity");
   tft.drawRoundRect(40, 100, 180, 140, 10, WHITE);
   tft.setCursor(70,150);
-  tft.setTextSize(5);
-  tft.print("15");
+  tft.setTextSize(3);
+  tft.print(getHumidData().temp);
   tft.print(" C");
   tft.drawRoundRect(260, 100, 180, 140, 10, WHITE);
   tft.setCursor(295,150);
-  tft.setTextSize(5);
-  tft.print("75");
+  tft.print(getHumidData().humd);
   tft.print(" %");
 }
 void loadColdHide(void) {
@@ -195,7 +173,7 @@ void loadEditTempMenu() {
   tft.setCursor(290,155);
   tft.setTextColor(WHITE, BLACK);
   tft.setTextSize(3);
-  tft.print(targettemperature);
+  tft.print(target_temperature);
   tft.print(" ");
   tft.print("\367");
   tft.print("C");

@@ -4,7 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_GrayOLED.h>
 #include <menu/touchscreen.h>
-
+#include <devices/relay.h>
 
 // Variables
 bool load_edit_menu = false;
@@ -14,15 +14,10 @@ bool load_edit_uvb = false;
 bool load_edit_plants = false;
 bool down;
 
-//relay
-byte dhp_relay_pin = 40;
-byte uvb_relay_pin = 42;
-byte light_relay_pin = 44;
-
 // Buttons 
 Adafruit_GFX_Button previous, next, edit, increase, decrease, home;
-Adafruit_GFX_Button heatswitch, uvbswitch, plantswitch , timeheatbulb, timeuvbbulb, timeplantsbulb;
-Adafruit_GFX_Button incrhour1, decrhour1, incrmin1, decrmin1, incrhour2, decrhour2, incrmin2, decrmin2;
+Adafruit_GFX_Button heat_switch, uvb_switch, plant_switch , time_heat_bulb, time_uvb_bulb, time_plants_bulb;
+Adafruit_GFX_Button incr_hour_1, decr_hour_1, incr_min_1, decr_min_1, incr_hour_2, decr_hour_2, incr_min_2, decr_min_2;
 
 void launchButtons(void) {
   previous.initButton(&tft, 300, 290, 100, 40, WHITE, RED, BLACK, "Previous", 2);
@@ -31,20 +26,20 @@ void launchButtons(void) {
   increase.initButton(&tft, 420, 290, 100, 40, WHITE, GREEN, BLACK, "+", 2);
   decrease.initButton(&tft, 300, 290, 100, 40, WHITE, RED, BLACK, "-", 2);
   home.initButton(&tft, 60, 290, 100, 40, WHITE, YELLOW, BLACK, "Return", 2);
-  heatswitch.initButton(&tft, 320, 90, 90, 40, WHITE, YELLOW, BLACK, "Switch", 2);
-  uvbswitch.initButton(&tft, 320, 140, 90, 40, WHITE, YELLOW, BLACK, "Switch", 2);
-  plantswitch.initButton(&tft, 320, 190, 90, 40, WHITE, YELLOW, BLACK, "Switch", 2);
-  timeheatbulb.initButton(&tft, 410, 90, 70, 40, WHITE, BLUE, BLACK, "Time", 2);
-  timeuvbbulb.initButton(&tft, 410, 140, 70, 40, WHITE, BLUE, BLACK, "Time", 2);
-  timeplantsbulb.initButton(&tft, 410, 190, 70, 40, WHITE, BLUE, BLACK, "Time", 2);
-  decrhour1.initButton(&tft, 220, 110, 30, 30, WHITE, RED, BLACK, "-", 2);
-  incrhour1.initButton(&tft, 310, 110, 30, 30, WHITE, GREEN, BLACK, "+", 2);
-  decrmin1.initButton(&tft, 360, 110, 30, 30, WHITE, RED, BLACK, "-", 2);
-  incrmin1.initButton(&tft, 450, 110, 30, 30, WHITE, GREEN, BLACK, "+", 2);
-  decrhour2.initButton(&tft, 220, 210, 30, 30, WHITE, RED, BLACK, "-", 2);
-  incrhour2.initButton(&tft, 310, 210, 30, 30, WHITE, GREEN, BLACK, "+", 2);
-  decrmin2.initButton(&tft, 360, 210, 30, 30, WHITE, RED, BLACK, "-", 2);
-  incrmin2.initButton(&tft, 450, 210, 30, 30, WHITE, GREEN, BLACK, "+", 2);
+  heat_switch.initButton(&tft, 320, 90, 90, 40, WHITE, YELLOW, BLACK, "Switch", 2);
+  uvb_switch.initButton(&tft, 320, 140, 90, 40, WHITE, YELLOW, BLACK, "Switch", 2);
+  plant_switch.initButton(&tft, 320, 190, 90, 40, WHITE, YELLOW, BLACK, "Switch", 2);
+  time_heat_bulb.initButton(&tft, 410, 90, 70, 40, WHITE, BLUE, BLACK, "Time", 2);
+  time_uvb_bulb.initButton(&tft, 410, 140, 70, 40, WHITE, BLUE, BLACK, "Time", 2);
+  time_plants_bulb.initButton(&tft, 410, 190, 70, 40, WHITE, BLUE, BLACK, "Time", 2);
+  decr_hour_1.initButton(&tft, 220, 110, 30, 30, WHITE, RED, BLACK, "-", 2);
+  incr_hour_1.initButton(&tft, 310, 110, 30, 30, WHITE, GREEN, BLACK, "+", 2);
+  decr_min_1.initButton(&tft, 360, 110, 30, 30, WHITE, RED, BLACK, "-", 2);
+  incr_min_1.initButton(&tft, 450, 110, 30, 30, WHITE, GREEN, BLACK, "+", 2);
+  decr_hour_2.initButton(&tft, 220, 210, 30, 30, WHITE, RED, BLACK, "-", 2);
+  incr_hour_2.initButton(&tft, 310, 210, 30, 30, WHITE, GREEN, BLACK, "+", 2);
+  decr_min_2.initButton(&tft, 360, 210, 30, 30, WHITE, RED, BLACK, "-", 2);
+  incr_min_2.initButton(&tft, 450, 210, 30, 30, WHITE, GREEN, BLACK, "+", 2);
   previous.drawButton();
   next.drawButton();
 }
@@ -62,45 +57,21 @@ void launchControls(void) {
     tft.fillScreen(BLACK);
     next.drawButton();
     previous.drawButton();
-    if (menuindex < 4) {
-      menuindex++;  
-    } else if (menuindex == 4){
-      menuindex = 0;
+    if (menu_index < 4) {
+      menu_index++;  
+    } else if (menu_index == 4){
+      menu_index = 0;
     }
   }
   if (previous.justPressed()) {
     tft.fillScreen(BLACK);
     previous.drawButton();
     next.drawButton();
-    if (menuindex > 0) {
-      menuindex--;  
-    } else if (menuindex == 0) {
-      menuindex = 4;
+    if (menu_index > 0) {
+      menu_index--;  
+    } else if (menu_index == 0) {
+      menu_index = 4;
     }
-  }
-}
-
-void relayControlLights(void) {
-  DateTime now =  rtc.now();
-  // DHP
-  int hour = now.hour();
-  int minute = now.minute();
-  if ((hour == on_dhp_hour) && (minute == on_dhp_minute)) {
-    digitalWrite(dhp_relay_pin, LOW);
-  } else if ((hour == off_dhp_hour) && (minute == off_dhp_minute)){
-    digitalWrite(dhp_relay_pin, HIGH);
-  }
-  // UVB
-  if ((hour == on_uvb_hour) && (minute == on_uvb_minute)) {
-    digitalWrite(uvb_relay_pin, LOW);
-  } else if ((hour == off_uvb_hour) && (minute == off_uvb_minute)){
-    digitalWrite(uvb_relay_pin, HIGH);
-  }
-  // Plants Light
-  if ((hour == on_plants_hour) && (minute == on_plants_minute)) {
-    digitalWrite(light_relay_pin, LOW);
-  } else if ((hour == off_plants_hour) && (minute == off_plants_minute)){
-    digitalWrite(light_relay_pin, HIGH);
   }
 }
 
@@ -117,7 +88,7 @@ void editTargetTemp(void) {
     decrease.press(down && decrease.contains(pixel_x, pixel_y)); 
     home.press(down && home.contains(pixel_x, pixel_y)); 
     if (increase.justPressed()) {
-      targettemperature += 0.5;
+      target_temperature += 0.5;
       loadEditTempMenu();
       increase.drawButton();
       decrease.drawButton();
@@ -125,7 +96,7 @@ void editTargetTemp(void) {
       delay(200);
     }
     if (decrease.justPressed()) {
-      targettemperature -= 0.5;
+      target_temperature -= 0.5;
       loadEditTempMenu();
       increase.drawButton();
       decrease.drawButton();
@@ -168,8 +139,8 @@ void editTemperatureWarmSide() {
         tft.fillScreen(BLACK);
         next.drawButton();
         previous.drawButton();
-        if (menuindex < 4) {
-          menuindex++;  
+        if (menu_index < 4) {
+          menu_index++;  
         }
       }  
       if (previous.justPressed()) {
@@ -177,8 +148,8 @@ void editTemperatureWarmSide() {
         tft.fillScreen(BLACK);
         previous.drawButton();
         next.drawButton();
-        if (menuindex > 0) {
-          menuindex--;  
+        if (menu_index > 0) {
+          menu_index--;  
         }
       }
     }  
@@ -189,11 +160,11 @@ void editTemperatureWarmSide() {
 bool switch_press_heat = false;
 void switchHeatBulb(void) {
   if (switch_press_heat == true){
-    heatswitch.drawButton();
+    heat_switch.drawButton();
     switch_press_heat = false;
     digitalWrite(dhp_relay_pin, LOW);
   } else {
-    heatswitch.drawButton(true);
+    heat_switch.drawButton(true);
     switch_press_heat = true;
     digitalWrite(dhp_relay_pin, HIGH);
   }
@@ -201,27 +172,27 @@ void switchHeatBulb(void) {
 
 void timeDrawButtons(void) {
   home.drawButton();
-  incrhour1.drawButton();
-  decrhour1.drawButton();
-  incrmin1.drawButton();
-  decrmin1.drawButton();
-  incrhour2.drawButton();
-  decrhour2.drawButton();
-  incrmin2.drawButton();
-  decrmin2.drawButton();
+  incr_hour_1.drawButton();
+  decr_hour_1.drawButton();
+  incr_min_1.drawButton();
+  decr_min_1.drawButton();
+  incr_hour_2.drawButton();
+  decr_hour_2.drawButton();
+  incr_min_2.drawButton();
+  decr_min_2.drawButton();
 }
 
 void timePressButtons(void) {
   down = Touch_getXY();
   home.press(down && home.contains(pixel_x, pixel_y)); 
-  incrhour1.press(down && incrhour1.contains(pixel_x, pixel_y)); 
-  decrhour1.press(down && decrhour1.contains(pixel_x, pixel_y)); 
-  incrmin1.press(down && incrmin1.contains(pixel_x, pixel_y)); 
-  decrmin1.press(down && decrmin1.contains(pixel_x, pixel_y)); 
-  incrhour2.press(down && incrhour2.contains(pixel_x, pixel_y)); 
-  decrhour2.press(down && decrhour2.contains(pixel_x, pixel_y)); 
-  incrmin2.press(down && incrmin2.contains(pixel_x, pixel_y)); 
-  decrmin2.press(down && decrmin2.contains(pixel_x, pixel_y)); 
+  incr_hour_1.press(down && incr_hour_1.contains(pixel_x, pixel_y)); 
+  decr_hour_1.press(down && decr_hour_1.contains(pixel_x, pixel_y)); 
+  incr_min_1.press(down && incr_min_1.contains(pixel_x, pixel_y)); 
+  decr_min_1.press(down && decr_min_1.contains(pixel_x, pixel_y)); 
+  incr_hour_2.press(down && incr_hour_2.contains(pixel_x, pixel_y)); 
+  decr_hour_2.press(down && decr_hour_2.contains(pixel_x, pixel_y)); 
+  incr_min_2.press(down && incr_min_2.contains(pixel_x, pixel_y)); 
+  decr_min_2.press(down && decr_min_2.contains(pixel_x, pixel_y)); 
 }
 
 void timeHeatBulb(void) {
@@ -231,42 +202,42 @@ void timeHeatBulb(void) {
   bool time_heat_menu = true;
   while (time_heat_menu) {
     timePressButtons();
-    if (incrhour1.justPressed()) {
+    if (incr_hour_1.justPressed()) {
       on_dhp_hour++;
       loadEditTimeHeatMenu();
       delay(100);
     }
-    if (decrhour1.justPressed()) {
+    if (decr_hour_1.justPressed()) {
       on_dhp_hour--;
       loadEditTimeHeatMenu();
       delay(100);
     }
-    if (incrmin1.justPressed()) {
+    if (incr_min_1.justPressed()) {
       on_dhp_minute++;
       loadEditTimeHeatMenu();
       delay(100);
     }
-    if (decrmin1.justPressed()) {
+    if (decr_min_1.justPressed()) {
       on_dhp_minute--;
       loadEditTimeHeatMenu();
       delay(100);
     }
-    if (incrhour2.justPressed()) {
+    if (incr_hour_2.justPressed()) {
       off_dhp_hour++;
       loadEditTimeHeatMenu();
       delay(100);
     }
-    if (decrhour2.justPressed()) {
+    if (decr_hour_2.justPressed()) {
       off_dhp_hour--;
       loadEditTimeHeatMenu();
       delay(100);
     }
-    if (incrmin2.justPressed()) {
+    if (incr_min_2.justPressed()) {
       off_dhp_minute++;
       loadEditTimeHeatMenu();
       delay(100);
     }
-    if (decrmin2.justPressed()) {
+    if (decr_min_2.justPressed()) {
       off_dhp_minute--;
       loadEditTimeHeatMenu();
       delay(100);
@@ -282,11 +253,11 @@ void timeHeatBulb(void) {
 bool switch_press_uvb = false;
 void switchUvbBulb(void) {
   if (switch_press_uvb == true){
-    uvbswitch.drawButton();
+    uvb_switch.drawButton();
     switch_press_uvb = false;
     digitalWrite(uvb_relay_pin, LOW);
   } else {
-    uvbswitch.drawButton(true);
+    uvb_switch.drawButton(true);
     switch_press_uvb = true;
     digitalWrite(uvb_relay_pin, HIGH);
   }
@@ -299,42 +270,42 @@ void timeUvbBulb(void) {
   bool time_heat_menu = true;
   while (time_heat_menu) {
     timePressButtons();
-    if (incrhour1.justPressed()) {
+    if (incr_hour_1.justPressed()) {
       on_uvb_hour++;
       loadEditTimeUvbMenu();
       delay(100);
     }
-    if (decrhour1.justPressed()) {
+    if (decr_hour_1.justPressed()) {
       on_uvb_hour--;
       loadEditTimeUvbMenu();
       delay(100);
     }
-    if (incrmin1.justPressed()) {
+    if (incr_min_1.justPressed()) {
       on_uvb_minute++;
       loadEditTimeUvbMenu();
       delay(100);
     }
-    if (decrmin1.justPressed()) {
+    if (decr_min_1.justPressed()) {
       on_uvb_minute--;
       loadEditTimeUvbMenu();
       delay(100);
     }
-    if (incrhour2.justPressed()) {
+    if (incr_hour_2.justPressed()) {
       off_uvb_hour++;
       loadEditTimeUvbMenu();
       delay(100);
     }
-    if (decrhour2.justPressed()) {
+    if (decr_hour_2.justPressed()) {
       off_uvb_hour--;
       loadEditTimeUvbMenu();
       delay(100);
     }
-    if (incrmin2.justPressed()) {
+    if (incr_min_2.justPressed()) {
       off_uvb_minute++;
       loadEditTimeUvbMenu();
       delay(100);
     }
-    if (decrmin2.justPressed()) {
+    if (decr_min_2.justPressed()) {
       off_uvb_minute--;
       loadEditTimeUvbMenu();
       delay(100);
@@ -350,11 +321,11 @@ void timeUvbBulb(void) {
 bool switch_press_plants = false;
 void switchPlantsBulb(void) {
   if (switch_press_plants == true){
-    plantswitch.drawButton();
+    plant_switch.drawButton();
     switch_press_plants = false;
     digitalWrite(light_relay_pin, LOW);
   } else {
-    plantswitch.drawButton(true);
+    plant_switch.drawButton(true);
     switch_press_plants = true;
     digitalWrite(light_relay_pin, HIGH);
   }
@@ -367,42 +338,42 @@ void timePlantsBulb(void) {
   bool time_heat_menu = true;
   while (time_heat_menu) {
     timePressButtons();
-    if (incrhour1.justPressed()) {
+    if (incr_hour_1.justPressed()) {
       on_plants_hour++;
       loadEditTimePlantsMenu();
       delay(100);
     }
-    if (decrhour1.justPressed()) {
+    if (decr_hour_1.justPressed()) {
       on_plants_hour--;
       loadEditTimePlantsMenu();
       delay(100);
     }
-    if (incrmin1.justPressed()) {
+    if (incr_min_1.justPressed()) {
       on_plants_minute++;
       loadEditTimePlantsMenu();
       delay(100);
     }
-    if (decrmin1.justPressed()) {
+    if (decr_min_1.justPressed()) {
       on_plants_minute--;
       loadEditTimePlantsMenu();
       delay(100);
     }
-    if (incrhour2.justPressed()) {
+    if (incr_hour_2.justPressed()) {
       off_plants_hour++;
       loadEditTimePlantsMenu();
       delay(100);
     }
-    if (decrhour2.justPressed()) {
+    if (decr_hour_2.justPressed()) {
       off_plants_hour--;
       loadEditTimePlantsMenu();
       delay(100);
     }
-    if (incrmin2.justPressed()) {
+    if (incr_min_2.justPressed()) {
       off_plants_minute++;
       loadEditTimePlantsMenu();
       delay(100);
     }
-    if (decrmin2.justPressed()) {
+    if (decr_min_2.justPressed()) {
       off_plants_minute--;
       loadEditTimePlantsMenu();
       delay(100);
@@ -415,12 +386,12 @@ void timePlantsBulb(void) {
 }
 
 void editControlPanel(void) {
-  heatswitch.drawButton();
-  timeheatbulb.drawButton();
-  uvbswitch.drawButton();
-  timeuvbbulb.drawButton();
-  plantswitch.drawButton();
-  timeplantsbulb.drawButton();
+  heat_switch.drawButton();
+  time_heat_bulb.drawButton();
+  uvb_switch.drawButton();
+  time_uvb_bulb.drawButton();
+  plant_switch.drawButton();
+  time_plants_bulb.drawButton();
   while (load_edit_bulb) {
     // this needs to be in every while. the dhp wont work otherwise
     getWarmData();
@@ -428,32 +399,32 @@ void editControlPanel(void) {
     down = Touch_getXY();
     previous.press(down && previous.contains(pixel_x, pixel_y));
     next.press(down && next.contains(pixel_x, pixel_y));
-    heatswitch.press(down && heatswitch.contains(pixel_x, pixel_y)); 
-    timeheatbulb.press(down && timeheatbulb.contains(pixel_x, pixel_y)); 
-    uvbswitch.press(down && uvbswitch.contains(pixel_x, pixel_y)); 
-    timeuvbbulb.press(down && timeuvbbulb.contains(pixel_x, pixel_y)); 
-    plantswitch.press(down && plantswitch.contains(pixel_x, pixel_y));
-    timeplantsbulb.press(down && timeplantsbulb.contains(pixel_x, pixel_y));
-    if (heatswitch.justPressed()) {
+    heat_switch.press(down && heat_switch.contains(pixel_x, pixel_y)); 
+    time_heat_bulb.press(down && time_heat_bulb.contains(pixel_x, pixel_y)); 
+    uvb_switch.press(down && uvb_switch.contains(pixel_x, pixel_y)); 
+    time_uvb_bulb.press(down && time_uvb_bulb.contains(pixel_x, pixel_y)); 
+    plant_switch.press(down && plant_switch.contains(pixel_x, pixel_y));
+    time_plants_bulb.press(down && time_plants_bulb.contains(pixel_x, pixel_y));
+    if (heat_switch.justPressed()) {
       switchHeatBulb();
       delay(200);
-    } else if (timeheatbulb.justPressed()) {
+    } else if (time_heat_bulb.justPressed()) {
       timeHeatBulb();
       tft.fillScreen(BLACK);
       next.drawButton();
       previous.drawButton();
-    } else if (uvbswitch.justPressed()) {
+    } else if (uvb_switch.justPressed()) {
       switchUvbBulb();
       delay(200);
-    } else if (timeuvbbulb.justPressed()) {
+    } else if (time_uvb_bulb.justPressed()) {
       timeUvbBulb();
       tft.fillScreen(BLACK);
       next.drawButton();
       previous.drawButton();
-    } else if (plantswitch.justPressed()) {
+    } else if (plant_switch.justPressed()) {
       switchPlantsBulb();
       delay(200);
-    } else if (timeplantsbulb.justPressed()) {
+    } else if (time_plants_bulb.justPressed()) {
       timePlantsBulb();
       tft.fillScreen(BLACK);
       next.drawButton();
@@ -464,10 +435,10 @@ void editControlPanel(void) {
         tft.fillScreen(BLACK);
         next.drawButton();
         previous.drawButton();
-        if (menuindex < 4) {
-          menuindex++;  
-        } else if (menuindex == 4) {
-          menuindex = 0;  
+        if (menu_index < 4) {
+          menu_index++;  
+        } else if (menu_index == 4) {
+          menu_index = 0;  
         }
       }  
       if (previous.justPressed()) {
@@ -475,10 +446,10 @@ void editControlPanel(void) {
         tft.fillScreen(BLACK);
         previous.drawButton();
         next.drawButton();
-        if (menuindex > 0) {
-          menuindex--;  
-        } else if (menuindex == 0) {
-          menuindex = 4;  
+        if (menu_index > 0) {
+          menu_index--;  
+        } else if (menu_index == 0) {
+          menu_index = 4;  
         }
       } 
     }

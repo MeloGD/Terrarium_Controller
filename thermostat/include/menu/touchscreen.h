@@ -5,8 +5,8 @@
 #include <TouchScreen.h>
 #include <menu/tft.h>
 
-#define MINPRESSURE 100
-#define MAXPRESSURE 1000
+#define MIN_PRESSURE 100
+#define MAX_PRESSURE 1000
 
 /* TouchScreen */
 // data pins
@@ -26,7 +26,7 @@ bool Touch_getXY(void) {
   pinMode(XM, OUTPUT);
   digitalWrite(YP, HIGH);   //because TFT control pins
   digitalWrite(XM, HIGH); 
-  bool pressed = (p.z > MINPRESSURE && p.z < MAXPRESSURE);
+  bool pressed = (p.z > MIN_PRESSURE && p.z < MAX_PRESSURE);
   if (pressed) {
     pixel_x = map(p.y, TS_LEFT, TS_RT, 0, tft.width()); //.kbv makes sense to me
     pixel_y = map(p.x, TS_TOP, TS_BOT, 0, tft.height());

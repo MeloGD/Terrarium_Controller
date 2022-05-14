@@ -1,6 +1,5 @@
-int dimmerpin = 46;
+int dimmer_pin = 46;
 
 void setPWM(int pwmvalue) {
-  analogWrite(dimmerpin, pwmvalue);
-  //delay(5);
+  analogWrite(dimmer_pin, pwmvalue);
 }

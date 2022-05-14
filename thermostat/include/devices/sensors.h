@@ -1,70 +1,101 @@
+#ifndef sensors
+#define sensors
+
 #include <DHT.h>
 #include <DallasTemperature.h>
-#include <./devices/dimmer.h>
-#include <DS3231.h>
-#include <Wire.h>
+#include <devices/dimmer.h>
+#include <devices/rtc.h>
 
 
 // Pin
-#define DHTPIN_1 22
-#define DS18B20PIN_1 39
-#define DS18B20PIN_2 37
-#define DHTTYPE DHT21
-OneWire warmwire(DS18B20PIN_1);
-OneWire coldwire(DS18B20PIN_2);
+#define DHT_PIN_1 22
+#define DHT_PIN_2 24
+#define DS18B20_PIN_1 39
+#define DS18B20_PIN_2 37
+#define DHT_TYPE DHT21
+OneWire warm_wire(DS18B20_PIN_1);
+OneWire cold_wire(DS18B20_PIN_2);
 
 // Sensors
-DHT dht(DHTPIN_1, DHTTYPE);
-DallasTemperature warmsensor(&warmwire);
-DallasTemperature coldsensor(&coldwire);
+DHT dht_env(DHT_PIN_1, DHT_TYPE);
+DHT dht_hum(DHT_PIN_2, DHT_TYPE);
+DallasTemperature warm_sensor(&warm_wire);
+DallasTemperature cold_sensor(&cold_wire);
 
 // Sensor Address
-DeviceAddress warmsensoraddress;
-DeviceAddress coldsensoraddress;
+DeviceAddress warm_sensor_address;
+DeviceAddress cold_sensor_address;
 
 // Areas
-float targettemperature = 32.0;
-float humidtemp = 0.0;
-float humidhumd = 0.0;
-
+float target_temperature = 32.0;
 
 struct envdata {
-  float envtemp = 0.0;
-  float envhumd = 0.0;
+  float temp = 0.0;
+  float humd = 0.0;
 }enviromentdata;
 
 envdata getEnviromentData(void) {
   envdata data;
-  data.envhumd = dht.readHumidity();
-  data.envtemp = dht.readTemperature();
+  data.humd = dht_env.readHumidity();
+  data.temp = dht_env.readTemperature();
+  return data;
+}
+
+envdata getHumidData(void) {
+  envdata data;
+  data.humd = dht_hum.readHumidity();
+  data.temp = dht_hum.readTemperature();
   return data;
 }
 
 float getWarmData(void) {
-  warmsensor.getAddress(warmsensoraddress,0);
-  warmsensor.requestTemperatures();
-  if (warmsensor.isConnected(warmsensoraddress)) {
-    
-    if (warmsensor.getTempC(warmsensoraddress) >= targettemperature) {
-      setPWM(0);
-    } else if ((warmsensor.getTempC(warmsensoraddress) < targettemperature) 
-              && (warmsensor.getTempC(warmsensoraddress) >= (targettemperature - 4)) ) {
-      setPWM(180);
+  warm_sensor.getAddress(warm_sensor_address,0);
+  warm_sensor.requestTemperatures();
+  if (warm_sensor.isConnected(warm_sensor_address)) {
+    DateTime now = rtc.now();
+    int hour = now.hour();
+    int minute = now.minute();
+    bool day;
+    // https://reptifiles.com/leopard-gecko-care/leopard-gecko-temperatures-humidity/
+    if (on_dhp_hour  <= hour < off_dhp_hour) {
+      day = true;
     } else {
-      setPWM(255);
-    } 
-    return warmsensor.getTempC(warmsensoraddress);
+      day = false;
+    }
+    if (day) {
+      if (warm_sensor.getTempC(warm_sensor_address) >= target_temperature) {
+        setPWM(0);
+      } else if ((warm_sensor.getTempC(warm_sensor_address) < target_temperature) 
+                && (warm_sensor.getTempC(warm_sensor_address) >= (target_temperature - 4)) ) {
+        setPWM(180);
+      } else {
+        setPWM(255);
+      } 
+      return warm_sensor.getTempC(warm_sensor_address);
+    } else if (!day) {  // Night
+      if (warm_sensor.getTempC(warm_sensor_address) >= (target_temperature - 8)) {
+        setPWM(0);
+      } else if ((warm_sensor.getTempC(warm_sensor_address) < (target_temperature - 8)) 
+                && (warm_sensor.getTempC(warm_sensor_address) >= (target_temperature - 10)) ) {
+        setPWM(180);
+      } else {
+        setPWM(255);
+      } 
+      return warm_sensor.getTempC(warm_sensor_address);
+    }
   } else {
     return 99.99;
   }
 }
 
 float getColdData(void) {
-  coldsensor.getAddress(coldsensoraddress,1);
-  coldsensor.requestTemperatures();
-  if (coldsensor.isConnected(coldsensoraddress)) {
-    return coldsensor.getTempC(coldsensoraddress);
+  cold_sensor.getAddress(cold_sensor_address,1);
+  cold_sensor.requestTemperatures();
+  if (cold_sensor.isConnected(cold_sensor_address)) {
+    return cold_sensor.getTempC(cold_sensor_address);
   } else {
     return 99.99;
   }
 }
+
+#endif

@@ -1,8 +1,7 @@
 #include <menu/TFT.h>
 #include <menu/buttons.h>
 #include <menu/touchscreen.h>
-
-
+#include <devices/relay.h>
 
 void setup() {
   pinMode(dhp_relay_pin, OUTPUT);
@@ -11,18 +10,19 @@ void setup() {
   launchTFT();
   launchButtons();
   Wire.begin();
-  dht.begin();
+  dht_env.begin();
+  dht_hum.begin();
 }
 
 void loop() {
   // Buttons
   launchControls();
-  //setClock();
   // Menu
-  switch (menuindex) {
+  switch (menu_index) {
     case 0: // Enviroment Menu
       loadEnviroment();
-      // this needs to be in every while. the dhp wont work otherwise
+      // Both getWarmData() and relayControlLights() need to be in every
+      //  while and case option. The temperature control wont work otherwise
       getWarmData();
       relayControlLights();
       break; 
