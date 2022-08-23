@@ -35,7 +35,7 @@ void launchTFT(void) {
   tft.begin(ID);
   tft.fillScreen(BLACK);
   // I had to use this function in order to see the colors right
-  tft.invertDisplay(true);
+  tft.invertDisplay(false);
   // 0 -> 0º, 1 -> 90º, 2 -> 180, 3 -> 270
   tft.setRotation(1);
 }
