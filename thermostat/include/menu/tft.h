@@ -65,27 +65,42 @@ void printTFTClock(void) {
   tft.print(now.second(), DEC);
 }
 
-void loadEnviroment() {
+void loadSummary() {
   printTFTClock();
   tft.setCursor(10,10);
-  tft.print("Enviroment"); 
-  tft.setCursor(60, 75);
+  tft.print("Summary"); 
   tft.setTextSize(2);
-  tft.print("Temperature");
-  tft.setCursor(300, 75);
-  tft.setTextSize(2);
-  tft.print("Humidity");
-  tft.drawRoundRect(40, 100, 180, 140, 10, WHITE);
-  tft.setCursor(70,150);
-  tft.setTextSize(3);
+  tft.setCursor(320, 65);
+  tft.print("\367");
+  tft.print("C");
+  tft.setCursor(400, 65);
+  tft.print("RH %");
+  tft.setCursor(20, 95);
+  tft.print("Enviroment Temperature");
+  tft.setCursor(320, 95);
   tft.print(getEnviromentData().temp);
-  tft.print(" C");
-  tft.drawRoundRect(260, 100, 180, 140, 10, WHITE);
-  tft.setCursor(295,150);
-  //tft.setTextSize(5);
+  tft.setCursor(400, 95);
   tft.print(getEnviromentData().humd);
-  tft.print(" %");
+  tft.setCursor(20, 135);
+  tft.print("Warm  Hide Temperature");
+  tft.setCursor(320, 135);
+  tft.print(getWarmData());
+  tft.setCursor(400, 135);
+  tft.print(" -");
+  tft.setCursor(20, 175);
+  tft.print("Humid Hide Temperature");
+  tft.setCursor(320, 175);
+  tft.print(getHumidData().temp);
+  tft.setCursor(400, 175);
+  tft.print(getHumidData().humd);
+  tft.setCursor(20, 215);
+  tft.print("Cold  Hide Temperature");
+  tft.setCursor(320, 215);
+  tft.print(getColdData());
+  tft.setCursor(400, 215);
+  tft.print(" -");
 }
+
 
 void loadWarmHide(void) {
   //printTFTClock();
@@ -107,44 +122,6 @@ void loadWarmHide(void) {
   tft.print(" C");
 }
 
-void loadHumidHide(void) {
-  printTFTClock();
-  tft.setCursor(10,10);
-  //tft.setTextSize(3);
-  //tft.setTextColor(WHITE);
-  tft.print("Humid Hide");
-  tft.setCursor(60, 75);
-  tft.setTextSize(2);
-  tft.print("Temperature");
-  tft.setCursor(300, 75);
-  tft.setTextSize(2);
-  tft.print("Humidity");
-  tft.drawRoundRect(40, 100, 180, 140, 10, WHITE);
-  tft.setCursor(70,150);
-  tft.setTextSize(3);
-  tft.print(getHumidData().temp);
-  tft.print(" C");
-  tft.drawRoundRect(260, 100, 180, 140, 10, WHITE);
-  tft.setCursor(295,150);
-  tft.print(getHumidData().humd);
-  tft.print(" %");
-}
-void loadColdHide(void) {
-  float temp = getColdData();
-  printTFTClock();
-  tft.setCursor(10,10);
-  //tft.setTextSize(3);
-  //tft.setTextColor(WHITE,BLACK);
-  tft.print("Cold Hide");
-  tft.setCursor(172, 75);
-  tft.setTextSize(2);
-  tft.print("Temperature");
-  tft.drawRoundRect(150, 100, 180, 140, 10, WHITE);
-  tft.setCursor(180,150);
-  tft.setTextSize(3);
-  tft.print(temp);
-  tft.print(" C");
-}
 void loadLightsPanel(void) {
   tft.setCursor(10,10);
   tft.setTextSize(3);

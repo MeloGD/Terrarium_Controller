@@ -19,32 +19,26 @@ void loop() {
   launchControls();
   // Menu
   switch (menu_index) {
-    case 0: // Enviroment Menu
-      loadEnviroment();
+    case 0: // Summary Menu
       // Both getWarmData() and relayControlLights() need to be in every
       //  while and case option. The temperature control wont work otherwise
+      // TODO: CHANGE getWarmData for ControlWarmTemp() and just control the
+      // temperature, not doing both controlling and reporting the temp
+      loadSummary();
       getWarmData();
       relayControlLights();
       break; 
     case 1: // Warm Hide Menu
       loadWarmHide();
       editTemperatureWarmSide();
-      break;
-    case 2:  // Humid Hide Menu
-      loadHumidHide();
       getWarmData();
       relayControlLights();
       break;
-    case 3: // Cold Hide Menu
-      loadColdHide();
-      getWarmData();
-      relayControlLights();
-      break;
-    case 4: // Lights Control Panel Menu
+    case 2: // Lights Control Panel Menu
       loadLightsPanel();
       editControlPanel();
+      getWarmData();
+      relayControlLights();
       break;
-    default:
-      break; 
   }
 }

@@ -57,9 +57,9 @@ void launchControls(void) {
     tft.fillScreen(BLACK);
     next.drawButton();
     previous.drawButton();
-    if (menu_index < 4) {
+    if (menu_index < 2) {
       menu_index++;  
-    } else if (menu_index == 4){
+    } else if (menu_index == 2) {
       menu_index = 0;
     }
   }
@@ -70,7 +70,7 @@ void launchControls(void) {
     if (menu_index > 0) {
       menu_index--;  
     } else if (menu_index == 0) {
-      menu_index = 4;
+      menu_index = 2;
     }
   }
 }
@@ -139,7 +139,7 @@ void editTemperatureWarmSide() {
         tft.fillScreen(BLACK);
         next.drawButton();
         previous.drawButton();
-        if (menu_index < 4) {
+        if (menu_index < 2) {
           menu_index++;  
         }
       }  
@@ -435,9 +435,9 @@ void editControlPanel(void) {
         tft.fillScreen(BLACK);
         next.drawButton();
         previous.drawButton();
-        if (menu_index < 4) {
+        if (menu_index < 2) {
           menu_index++;  
-        } else if (menu_index == 4) {
+        } else if (menu_index == 2) {
           menu_index = 0;  
         }
       }  
@@ -449,7 +449,7 @@ void editControlPanel(void) {
         if (menu_index > 0) {
           menu_index--;  
         } else if (menu_index == 0) {
-          menu_index = 4;  
+          menu_index = 2;  
         }
       } 
     }
