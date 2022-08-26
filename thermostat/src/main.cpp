@@ -2,9 +2,10 @@
 #include <menu/buttons.h>
 #include <menu/touchscreen.h>
 #include <devices/relay.h>
+#include <devices/dimmer.h>
 
 void setup() {
-  pinMode(dhp_relay_pin, OUTPUT);
+  pinMode(uva_relay_pin, OUTPUT);
   pinMode(uvb_relay_pin, OUTPUT);
   pinMode(light_relay_pin, OUTPUT);
   launchTFT();
@@ -25,19 +26,19 @@ void loop() {
       // TODO: CHANGE getWarmData for ControlWarmTemp() and just control the
       // temperature, not doing both controlling and reporting the temp
       loadSummary();
-      getWarmData();
+      controlWarmTemp();
       relayControlLights();
       break; 
     case 1: // Warm Hide Menu
       loadWarmHide();
       editTemperatureWarmSide();
-      getWarmData();
+      controlWarmTemp();
       relayControlLights();
       break;
     case 2: // Lights Control Panel Menu
       loadLightsPanel();
       editControlPanel();
-      getWarmData();
+      controlWarmTemp();
       relayControlLights();
       break;
   }

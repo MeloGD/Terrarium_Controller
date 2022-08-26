@@ -6,7 +6,7 @@
 #include <Wire.h>
 
 //relay
-byte dhp_relay_pin = 40;
+byte uva_relay_pin = 40;
 byte uvb_relay_pin = 42;
 byte light_relay_pin = 44;
 

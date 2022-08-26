@@ -3,9 +3,8 @@
 
 #include <DHT.h>
 #include <DallasTemperature.h>
-#include <devices/dimmer.h>
+//#include <devices/dimmer.h>
 #include <devices/rtc.h>
-
 
 // Pin
 #define DHT_PIN_1 22
@@ -26,7 +25,6 @@ DallasTemperature cold_sensor(&cold_wire);
 DeviceAddress warm_sensor_address;
 DeviceAddress cold_sensor_address;
 
-// Areas
 float target_temperature = 32.0;
 
 struct envdata {
@@ -52,37 +50,7 @@ float getWarmData(void) {
   warm_sensor.getAddress(warm_sensor_address,0);
   warm_sensor.requestTemperatures();
   if (warm_sensor.isConnected(warm_sensor_address)) {
-    DateTime now = rtc.now();
-    int hour = now.hour();
-    int minute = now.minute();
-    bool day;
-    // https://reptifiles.com/leopard-gecko-care/leopard-gecko-temperatures-humidity/
-    if (on_dhp_hour  <= hour < off_dhp_hour) {
-      day = true;
-    } else {
-      day = false;
-    }
-    if (day) {
-      if (warm_sensor.getTempC(warm_sensor_address) >= target_temperature) {
-        setPWM(0);
-      } else if ((warm_sensor.getTempC(warm_sensor_address) < target_temperature) 
-                && (warm_sensor.getTempC(warm_sensor_address) >= (target_temperature - 4)) ) {
-        setPWM(180);
-      } else {
-        setPWM(255);
-      } 
-      return warm_sensor.getTempC(warm_sensor_address);
-    } else if (!day) {  // Night
-      if (warm_sensor.getTempC(warm_sensor_address) >= (target_temperature - 8)) {
-        setPWM(0);
-      } else if ((warm_sensor.getTempC(warm_sensor_address) < (target_temperature - 8)) 
-                && (warm_sensor.getTempC(warm_sensor_address) >= (target_temperature - 10)) ) {
-        setPWM(180);
-      } else {
-        setPWM(255);
-      } 
-      return warm_sensor.getTempC(warm_sensor_address);
-    }
+    return warm_sensor.getTempC(warm_sensor_address);
   } else {
     return 99.99;
   }

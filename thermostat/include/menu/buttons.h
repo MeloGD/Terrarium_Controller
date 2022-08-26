@@ -156,17 +156,17 @@ void editTemperatureWarmSide() {
   }
 }
 
-// DHP
+// uva
 bool switch_press_heat = false;
 void switchHeatBulb(void) {
   if (switch_press_heat == true){
     heat_switch.drawButton();
     switch_press_heat = false;
-    digitalWrite(dhp_relay_pin, LOW);
+    digitalWrite(uva_relay_pin, LOW);
   } else {
     heat_switch.drawButton(true);
     switch_press_heat = true;
-    digitalWrite(dhp_relay_pin, HIGH);
+    digitalWrite(uva_relay_pin, HIGH);
   }
 }
 
@@ -203,42 +203,66 @@ void timeHeatBulb(void) {
   while (time_heat_menu) {
     timePressButtons();
     if (incr_hour_1.justPressed()) {
-      on_dhp_hour++;
+      on_uva_hour++;
+      if (on_uva_hour == 24) {
+        on_uva_hour = 0;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decr_hour_1.justPressed()) {
-      on_dhp_hour--;
+      on_uva_hour--;
+      if (on_uva_hour < 0) {
+        on_uva_hour = 23;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (incr_min_1.justPressed()) {
-      on_dhp_minute++;
+      on_uva_minute += 5;
+      if (on_uva_minute == 60) {
+        on_uva_minute = 0;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decr_min_1.justPressed()) {
-      on_dhp_minute--;
+      on_uva_minute -= 5;
+      if (on_uva_minute < 0) {
+        on_uva_minute = 55;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (incr_hour_2.justPressed()) {
-      off_dhp_hour++;
+      off_uva_hour++;
+      if (off_uva_hour == 24) {
+        off_uva_hour = 0;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decr_hour_2.justPressed()) {
-      off_dhp_hour--;
+      off_uva_hour--;
+      if (off_uva_hour < 0) {
+        off_uva_hour = 23;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (incr_min_2.justPressed()) {
-      off_dhp_minute++;
+      off_uva_minute +=5;
+      if (off_uva_minute == 60) {
+        off_uva_minute = 0;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
     if (decr_min_2.justPressed()) {
-      off_dhp_minute--;
+      off_uva_minute -=5;
+      if (off_uva_minute < 0) {
+        off_uva_minute = 55;
+      }
       loadEditTimeHeatMenu();
       delay(100);
     }
@@ -272,41 +296,65 @@ void timeUvbBulb(void) {
     timePressButtons();
     if (incr_hour_1.justPressed()) {
       on_uvb_hour++;
+      if (on_uvb_hour == 24) {
+        on_uvb_hour = 0;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decr_hour_1.justPressed()) {
       on_uvb_hour--;
+      if (on_uvb_hour < 0) {
+        on_uvb_hour = 23;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (incr_min_1.justPressed()) {
-      on_uvb_minute++;
+      on_uvb_minute += 5;
+      if (on_uvb_minute == 60) {
+        on_uvb_minute = 0;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decr_min_1.justPressed()) {
-      on_uvb_minute--;
+      on_uvb_minute -=5;
+      if (on_uvb_minute < 0) {
+        on_uvb_minute = 55;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (incr_hour_2.justPressed()) {
       off_uvb_hour++;
+      if (off_uvb_hour == 24) {
+        off_uvb_hour = 0;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decr_hour_2.justPressed()) {
       off_uvb_hour--;
+      if (off_uvb_hour < 0) {
+        off_uvb_hour = 23;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (incr_min_2.justPressed()) {
-      off_uvb_minute++;
+      off_uvb_minute += 5;
+      if (off_uvb_minute == 60) {
+        off_uvb_minute = 0;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
     if (decr_min_2.justPressed()) {
-      off_uvb_minute--;
+      off_uvb_minute -= 5;
+      if (off_uvb_minute < 0) {
+        off_uvb_minute = 55;
+      }
       loadEditTimeUvbMenu();
       delay(100);
     }
@@ -340,41 +388,65 @@ void timePlantsBulb(void) {
     timePressButtons();
     if (incr_hour_1.justPressed()) {
       on_plants_hour++;
+      if (on_plants_hour == 24) {
+        on_plants_hour = 0;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decr_hour_1.justPressed()) {
       on_plants_hour--;
+      if (on_plants_hour < 0) {
+        on_plants_hour = 23;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (incr_min_1.justPressed()) {
-      on_plants_minute++;
+      on_plants_minute += 5;
+      if (on_plants_minute == 60) {
+        on_plants_minute = 0;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decr_min_1.justPressed()) {
-      on_plants_minute--;
+      on_plants_minute -= 5;
+      if (on_plants_minute < 0) {
+        on_plants_minute = 55;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (incr_hour_2.justPressed()) {
       off_plants_hour++;
+      if (off_plants_hour == 24) {
+        off_plants_hour = 0;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decr_hour_2.justPressed()) {
       off_plants_hour--;
+      if (off_plants_hour < 0) {
+        off_plants_hour = 23;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (incr_min_2.justPressed()) {
-      off_plants_minute++;
+      off_plants_minute += 5;
+      if (off_plants_minute == 60) {
+        off_plants_minute = 0;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
     if (decr_min_2.justPressed()) {
-      off_plants_minute--;
+      off_plants_minute -= 5;
+      if (off_plants_minute < 0) {
+        off_plants_minute = 55;
+      }
       loadEditTimePlantsMenu();
       delay(100);
     }
@@ -393,7 +465,7 @@ void editControlPanel(void) {
   plant_switch.drawButton();
   time_plants_bulb.drawButton();
   while (load_edit_bulb) {
-    // this needs to be in every while. the dhp wont work otherwise
+    // this needs to be in every while. the uva wont work otherwise
     getWarmData();
     relayControlLights();
     down = Touch_getXY();

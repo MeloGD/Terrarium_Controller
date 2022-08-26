@@ -44,29 +44,25 @@ void printTFTClock(void) {
   DateTime now = rtc.now();
   tft.setTextSize(3);
   tft.setTextColor(WHITE,BLACK);
-  tft.setCursor(300, 10);
+  tft.setCursor(270, 10);
+  tft.print("Time:");
+  tft.setCursor(370, 10);
   if (now.hour() < 10) {
     tft.print('0');
   }
   tft.print(now.hour(), DEC);
-  tft.setCursor(340, 10);
+  tft.setCursor(410, 10);
   tft.print(":");
-  tft.setCursor(360, 10);
+  tft.setCursor(430, 10);
   if (now.minute() < 10) {
     tft.print('0');
   }
   tft.print(now.minute());
-  tft.setCursor(400, 10);
-  tft.print(":");
-  tft.setCursor(420, 10);
-  if (now.second() < 10) {
-    tft.print('0');
-  }
-  tft.print(now.second(), DEC);
 }
 
 void loadSummary() {
   printTFTClock();
+  tft.drawLine(10,40,470,40,WHITE);
   tft.setCursor(10,10);
   tft.print("Summary"); 
   tft.setTextSize(2);
@@ -103,7 +99,7 @@ void loadSummary() {
 
 
 void loadWarmHide(void) {
-  //printTFTClock();
+  tft.drawLine(10,40,470,40,WHITE);
   tft.setCursor(10,10);
   tft.setTextSize(3);
   tft.setTextColor(WHITE);
@@ -123,13 +119,14 @@ void loadWarmHide(void) {
 }
 
 void loadLightsPanel(void) {
+  tft.drawLine(10,40,470,40,WHITE);
   tft.setCursor(10,10);
   tft.setTextSize(3);
   tft.setTextColor(WHITE);
   tft.print("Lights Control Panel");
   tft.setTextSize(3);
   tft.setCursor(40,80);
-  tft.print("DHP");
+  tft.print("UVA");
   tft.setCursor(40,130);
   tft.print("UVB");
   tft.setCursor(40,180);
@@ -137,6 +134,7 @@ void loadLightsPanel(void) {
 }
 
 void loadEditTempMenu() {
+  tft.drawLine(10,40,470,40,WHITE);
   tft.setCursor(10,10);
   tft.setTextSize(3);
   tft.setTextColor(WHITE);
@@ -157,13 +155,13 @@ void loadEditTempMenu() {
 }
 
 
-// DHP
+// UVA
 void loadEditTimeHeatMenu(void) {
-  //printTFTClock();
+  tft.drawLine(10,40,470,40,WHITE);
   tft.setCursor(10,10);
   tft.setTextSize(3);
   tft.setTextColor(WHITE, BLACK);
-  tft.print("Set DHP Time");
+  tft.print("Set UVA Time");
   tft.setTextSize(2);
   tft.setCursor(20,100);  
   tft.print("Switch on at:");
@@ -182,25 +180,38 @@ void loadEditTimeHeatMenu(void) {
   //switch on
   tft.setTextSize(3);
   tft.setCursor(247,100);
-  tft.print(on_dhp_hour);
+  if (on_uva_hour >= 0 && on_uva_hour < 10) {
+    tft.print(" ");
+  }
+  tft.print(on_uva_hour);
   tft.drawRoundRect(240, 85, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,100);
-  tft.print(on_dhp_minute);
+  if (on_uva_minute >= 0 && on_uva_minute < 10) {
+    tft.print(" ");
+  }
+  tft.print(on_uva_minute);
   tft.drawRoundRect(380, 85, 50, 50, 10, WHITE);
   // switch off
   tft.setTextSize(3);
   tft.setCursor(247,200);
-  tft.print(off_dhp_hour);
+  if (off_uva_hour >= 0 && off_uva_hour < 10) {
+    tft.print(" ");
+  }
+  tft.print(off_uva_hour);
   tft.drawRoundRect(240, 185, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,200);
-  tft.print(off_dhp_minute);
+  if (off_uva_minute >= 0 && off_uva_minute < 10) {
+    tft.print(" ");
+  }
+  tft.print(off_uva_minute);
   tft.drawRoundRect(380, 185, 50, 50, 10, WHITE);
 }
 
 //UVB
 void loadEditTimeUvbMenu(void) {
+  tft.drawLine(10,40,470,40,WHITE);
   tft.setCursor(10,10);
   tft.setTextSize(3);
   tft.setTextColor(WHITE, BLACK);
@@ -223,19 +234,31 @@ void loadEditTimeUvbMenu(void) {
   //switch on
   tft.setTextSize(3);
   tft.setCursor(247,100);
+  if (on_uvb_hour >= 0 && on_uvb_hour < 10) {
+    tft.print(" ");
+  }
   tft.print(on_uvb_hour);
   tft.drawRoundRect(240, 85, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,100);
+  if (on_uvb_minute >= 0 && on_uvb_minute < 10) {
+    tft.print(" ");
+  }
   tft.print(on_uvb_minute);
   tft.drawRoundRect(380, 85, 50, 50, 10, WHITE);
   // switch off
   tft.setTextSize(3);
   tft.setCursor(247,200);
+  if (off_uvb_hour >= 0 && off_uvb_hour < 10) {
+    tft.print(" ");
+  }
   tft.print(off_uvb_hour);
   tft.drawRoundRect(240, 185, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,200);
+  if (off_uvb_minute >= 0 && off_uvb_minute < 10) {
+    tft.print(" ");
+  }
   tft.print(off_uvb_minute);
   tft.drawRoundRect(380, 185, 50, 50, 10, WHITE);
 }
@@ -264,19 +287,31 @@ void loadEditTimePlantsMenu(void) {
   //switch on
   tft.setTextSize(3);
   tft.setCursor(247,100);
+  if (on_plants_hour >= 0 && on_plants_hour < 10) {
+    tft.print(" ");
+  }
   tft.print(on_plants_hour);
   tft.drawRoundRect(240, 85, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,100);
+  if (on_plants_minute >= 0 && on_plants_minute < 10) {
+    tft.print(" ");
+  }
   tft.print(on_plants_minute);
   tft.drawRoundRect(380, 85, 50, 50, 10, WHITE);
   // switch off
   tft.setTextSize(3);
   tft.setCursor(247,200);
+  if (off_plants_hour >= 0 && off_plants_hour < 10) {
+    tft.print(" ");
+  }
   tft.print(off_plants_hour);
   tft.drawRoundRect(240, 185, 50, 50, 10, WHITE);
   tft.setTextSize(3);
   tft.setCursor(387,200);
+  if (off_plants_minute >= 0 && off_plants_minute < 10) {
+    tft.print(" ");
+  }
   tft.print(off_plants_minute);
   tft.drawRoundRect(380, 185, 50, 50, 10, WHITE);
 }
