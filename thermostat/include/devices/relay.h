@@ -6,9 +6,9 @@
 #include <Wire.h>
 
 //relay
-byte uva_relay_pin = 40;
-byte uvb_relay_pin = 42;
-byte light_relay_pin = 44;
+#define DHP_RELAY_PIN 32
+#define UVB_RELAY_PIN 34
+#define LIGHT_RELAY_PIN 36
 
 void relayControlLights(void) {
   DateTime now =  rtc.now();
@@ -16,15 +16,15 @@ void relayControlLights(void) {
   int minute = now.minute();
   // UVB
   if ((hour == on_uvb_hour) && (minute == on_uvb_minute)) {
-    digitalWrite(uvb_relay_pin, LOW);
+    digitalWrite(UVB_RELAY_PIN, LOW);
   } else if ((hour == off_uvb_hour) && (minute == off_uvb_minute)){
-    digitalWrite(uvb_relay_pin, HIGH);
+    digitalWrite(UVB_RELAY_PIN, HIGH);
   }
   // Plants Light
   if ((hour == on_plants_hour) && (minute == on_plants_minute)) {
-    digitalWrite(light_relay_pin, LOW);
+    digitalWrite(LIGHT_RELAY_PIN, LOW);
   } else if ((hour == off_plants_hour) && (minute == off_plants_minute)){
-    digitalWrite(light_relay_pin, HIGH);
+    digitalWrite(LIGHT_RELAY_PIN, HIGH);
   }
 }
 

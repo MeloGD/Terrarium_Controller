@@ -4,11 +4,11 @@
 #include "rtc.h"
 #include "sensors.h"
 
-int dimmer_pin = 46;
+#define DIMMER_PIN 38
 bool day = false;
 
 void setPWM(int pwmvalue) {
-  analogWrite(dimmer_pin, pwmvalue);
+  analogWrite(DIMMER_PIN, pwmvalue);
 }
 
 void controlWarmTemp(void) {

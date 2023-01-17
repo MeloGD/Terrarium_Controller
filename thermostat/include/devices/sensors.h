@@ -7,10 +7,10 @@
 #include <devices/rtc.h>
 
 // Pin
-#define DHT_PIN_1 22
-#define DHT_PIN_2 24
-#define DS18B20_PIN_1 39
-#define DS18B20_PIN_2 37
+#define DHT_PIN_1 24
+#define DHT_PIN_2 26
+#define DS18B20_PIN_1 28
+#define DS18B20_PIN_2 30
 #define DHT_TYPE DHT21
 OneWire warm_wire(DS18B20_PIN_1);
 OneWire cold_wire(DS18B20_PIN_2);

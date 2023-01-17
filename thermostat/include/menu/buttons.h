@@ -162,11 +162,11 @@ void switchHeatBulb(void) {
   if (switch_press_heat == true){
     heat_switch.drawButton();
     switch_press_heat = false;
-    digitalWrite(uva_relay_pin, LOW);
+    digitalWrite(DHP_RELAY_PIN , LOW);
   } else {
     heat_switch.drawButton(true);
     switch_press_heat = true;
-    digitalWrite(uva_relay_pin, HIGH);
+    digitalWrite(DHP_RELAY_PIN , HIGH);
   }
 }
 
@@ -185,14 +185,14 @@ void timeDrawButtons(void) {
 void timePressButtons(void) {
   down = Touch_getXY();
   home.press(down && home.contains(pixel_x, pixel_y)); 
-  incr_hour_1.press(down && incr_hour_1.contains(pixel_x, pixel_y)); 
-  decr_hour_1.press(down && decr_hour_1.contains(pixel_x, pixel_y)); 
-  incr_min_1.press(down && incr_min_1.contains(pixel_x, pixel_y)); 
-  decr_min_1.press(down && decr_min_1.contains(pixel_x, pixel_y)); 
-  incr_hour_2.press(down && incr_hour_2.contains(pixel_x, pixel_y)); 
-  decr_hour_2.press(down && decr_hour_2.contains(pixel_x, pixel_y)); 
-  incr_min_2.press(down && incr_min_2.contains(pixel_x, pixel_y)); 
-  decr_min_2.press(down && decr_min_2.contains(pixel_x, pixel_y)); 
+  incr_hour_1.press(down && incr_hour_1.contains(pixel_x , pixel_y)); 
+  decr_hour_1.press(down && decr_hour_1.contains(pixel_x , pixel_y)); 
+  incr_min_1.press(down && incr_min_1.contains(pixel_x , pixel_y)); 
+  decr_min_1.press(down && decr_min_1.contains(pixel_x , pixel_y)); 
+  incr_hour_2.press(down && incr_hour_2.contains(pixel_x , pixel_y)); 
+  decr_hour_2.press(down && decr_hour_2.contains(pixel_x , pixel_y)); 
+  incr_min_2.press(down && incr_min_2.contains(pixel_x , pixel_y)); 
+  decr_min_2.press(down && decr_min_2.contains(pixel_x , pixel_y)); 
 }
 
 void timeHeatBulb(void) {
@@ -279,11 +279,11 @@ void switchUvbBulb(void) {
   if (switch_press_uvb == true){
     uvb_switch.drawButton();
     switch_press_uvb = false;
-    digitalWrite(uvb_relay_pin, LOW);
+    digitalWrite(UVB_RELAY_PIN , LOW);
   } else {
     uvb_switch.drawButton(true);
     switch_press_uvb = true;
-    digitalWrite(uvb_relay_pin, HIGH);
+    digitalWrite(UVB_RELAY_PIN , HIGH);
   }
 }
 
@@ -371,11 +371,11 @@ void switchPlantsBulb(void) {
   if (switch_press_plants == true){
     plant_switch.drawButton();
     switch_press_plants = false;
-    digitalWrite(light_relay_pin, LOW);
+    digitalWrite(LIGHT_RELAY_PIN , LOW);
   } else {
     plant_switch.drawButton(true);
     switch_press_plants = true;
-    digitalWrite(light_relay_pin, HIGH);
+    digitalWrite(LIGHT_RELAY_PIN , HIGH);
   }
 }
 
