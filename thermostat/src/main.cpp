@@ -4,9 +4,9 @@
 #include <devices/relay.h>
 
 void setup() {
-  pinMode(dhp_relay_pin, OUTPUT);
-  pinMode(uvb_relay_pin, OUTPUT);
-  pinMode(light_relay_pin, OUTPUT);
+  pinMode(DHP_RELAY_PIN, OUTPUT);
+  pinMode(UVB_RELAY_PIN, OUTPUT);
+  pinMode(LIGHT_RELAY_PIN, OUTPUT);
   launchTFT();
   launchButtons();
   Wire.begin();
