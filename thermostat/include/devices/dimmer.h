@@ -4,7 +4,7 @@
 #include "rtc.h"
 #include "sensors.h"
 
-#define DIMMER_PIN 38
+#define DIMMER_PIN 46
 bool day = false;
 
 void setPWM(int pwmvalue) {
@@ -22,6 +22,7 @@ void controlWarmTemp(void) {
   int down_time = off_uva_hour * 100 + off_uva_minute;
   if( up_time < current_time && current_time < down_time) {  
     if (warm_sensor.isConnected(warm_sensor_address)) { 
+      /*
     // https://reptifiles.com/leopard-gecko-care/leopard-gecko-temperatures-humidity/
       if (warm_sensor.getTempC(warm_sensor_address) >= target_temperature) {
         setPWM(100);
@@ -31,6 +32,8 @@ void controlWarmTemp(void) {
       } else {
         setPWM(140);
       }
+      */
+      setPWM(254);
     }
   } else {
     setPWM(1);
